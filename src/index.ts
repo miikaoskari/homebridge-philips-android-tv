@@ -1,10 +1,10 @@
-import { API } from 'homebridge';
-import { PLATFORM_NAME } from './settings';
-import { PhilipsAndroidTvAccessory } from './LegacyPhilipsTVAccessory';
+import type { API } from 'homebridge';
+
 import { PhilipsAndroidTVPlatform } from './PhilipsTVPlatform';
+import { PLATFORM_NAME } from './settings';
 
 
-export = (api: API) => {
-    api.registerAccessory('PhilipsAndroidTV', PhilipsAndroidTvAccessory);
+// Entry point registering platform with Homebridge
+module.exports = (api: API) => {
     api.registerPlatform(PLATFORM_NAME, PhilipsAndroidTVPlatform);
 };
