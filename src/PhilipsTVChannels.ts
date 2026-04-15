@@ -6,8 +6,8 @@ interface Channel {
 }
 
 class PhilipsTVChannels {
-    public channels : Channel[] = [];
-    
+    public channels: Channel[] = [];
+
     reloadChannels(listChannels: string) {
         const channels = JSON.parse(listChannels);
 
@@ -20,7 +20,7 @@ class PhilipsTVChannels {
         }
     }
 
-    getObjectByName(name: string) : Record<string, string> {
+    getObjectByName(name: string): Record<string, string> {
         for (const channel of this.channels) {
             if (channel.name === name) {
                 return channel.object;
@@ -29,7 +29,7 @@ class PhilipsTVChannels {
         return {};
     }
 
-    getNameByCcid(ccid: string) : string {
+    getNameByCcid(ccid: string): string {
         for (const channel of this.channels) {
             if (channel.ccid === ccid) {
                 return channel.name;
@@ -37,8 +37,8 @@ class PhilipsTVChannels {
         }
         return '';
     }
-    
-    getObjectByCcid(ccid: string) : Record<string, string> {
+
+    getObjectByCcid(ccid: string): Record<string, string> {
         for (const channel of this.channels) {
             if (channel.ccid === ccid) {
                 return channel.object;

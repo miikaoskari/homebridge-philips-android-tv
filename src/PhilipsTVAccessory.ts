@@ -97,7 +97,7 @@ export class PhilipsTVAccessory {
         if (this.config.broadcastIP) {
             tvConfig.broadcastIP = this.config.broadcastIP;
         }
-        
+
         this.tv = new PhilipsTV(config.ip, config.mac, auth, tvConfig);
     }
 
@@ -110,17 +110,17 @@ export class PhilipsTVAccessory {
         try {
             const result = await this.tv.wakeUntilAPIReady();
             this.log.info('[' + this.config.name + '] TV state ' + JSON.stringify(result));
-    
+
             const apps = await this.tv.getApplications();
             this.log.debug('[' + this.config.name + '] Applications: (lenght) ' + apps.applications.length);
-    
+
             this.apps = apps;
-    
+
             const channels = await this.tv.getTVChannels();
             this.log.debug('[' + this.config.name + '] Channels: (lenght) ' + channels.Channel.length);
-    
+
             this.channels.reloadChannels(JSON.stringify(channels));
-    
+
             await this.tv.getVolumePercentage();
         } catch {
             this.log.error('[' + this.config.name + '] Couldn\'t fetch basic informations from TV.');
@@ -164,7 +164,7 @@ export class PhilipsTVAccessory {
 
         this.tvSpeaker.setCharacteristic(this.api.hap.Characteristic.VolumeControlType,
             this.api.hap.Characteristic.VolumeControlType.ABSOLUTE);
-      
+
         this.tvSpeaker.getCharacteristic(this.api.hap.Characteristic.VolumeSelector)
             .on('set', this.sendVolumeControl.bind(this));
 
@@ -190,7 +190,7 @@ export class PhilipsTVAccessory {
 
         const channels = await this.tv.getTVChannels();
         for (const channel of channels.Channel) {
-            if (this.config.channels.includeAll 
+            if (this.config.channels.includeAll
                 || (this.config.channels.channels && this.config.channels.channels.includes(channel.name))) {
                 this.setupChannel(channel);
             } else if (this.config.channels.useFavorites) {
@@ -199,7 +199,7 @@ export class PhilipsTVAccessory {
                     if (channel.ccid === favoriteChannel.ccid) {
                         this.setupChannel(channel);
                     }
-                }   
+                }
             }
         }
 
@@ -232,7 +232,7 @@ export class PhilipsTVAccessory {
                     this.tvService!.updateCharacteristic(this.api.hap.Characteristic.Active, this.on);
                 }
             }
-            
+
             const volume = await this.tv.getVolumePercentage();
 
             if (volume !== this.volume) {
@@ -271,9 +271,9 @@ export class PhilipsTVAccessory {
     setupChannel(channel: Record<string, string>) {
         const i = Object.keys(this.configuredApps).length;
 
-        this.configuredApps[i] = {'name': channel.name, 'type': 'channel'};
+        this.configuredApps[i] = { 'name': channel.name, 'type': 'channel' };
         const service = new this.api.hap.Service.InputSource(this.accessory.displayName + channel.name, channel.name);
-                            
+
         service.setCharacteristic(this.api.hap.Characteristic.Identifier, i);
         service.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, channel.name);
         service.setCharacteristic(
@@ -282,21 +282,21 @@ export class PhilipsTVAccessory {
             this.api.hap.Characteristic.InputSourceType, this.api.hap.Characteristic.InputSourceType.TUNER);
         service.setCharacteristic(this.api.hap.Characteristic.CurrentVisibilityState,
             this.api.hap.Characteristic.CurrentVisibilityState.SHOWN);
-                            
+
         service.getCharacteristic(this.api.hap.Characteristic.ConfiguredName)
             .on('set', (name, callback) => {
                 callback(null, name);
             });
-                            
+
         this.accessory.addService(service);
         this.tvService!.addLinkedService(service);
     }
 
     setupApplication(application: Record<string, string>) {
         let i = Object.keys(this.configuredApps).length;
-        this.configuredApps[i] = {'name': application.label, 'type': 'app'};
+        this.configuredApps[i] = { 'name': application.label, 'type': 'app' };
         const service = new this.api.hap.Service.InputSource(this.accessory.displayName + application.label, application.label);
-                    
+
         service.setCharacteristic(this.api.hap.Characteristic.Identifier, i++);
         service.setCharacteristic(this.api.hap.Characteristic.ConfiguredName, application.label);
         service.setCharacteristic(this.api.hap.Characteristic.IsConfigured, this.api.hap.Characteristic.IsConfigured.CONFIGURED);
@@ -304,12 +304,12 @@ export class PhilipsTVAccessory {
             this.api.hap.Characteristic.InputSourceType.APPLICATION);
         service.setCharacteristic(this.api.hap.Characteristic.CurrentVisibilityState,
             this.api.hap.Characteristic.CurrentVisibilityState.SHOWN);
-                    
+
         service.getCharacteristic(this.api.hap.Characteristic.ConfiguredName)
             .on('set', (name, callback) => {
                 callback(null, name);
             });
-                    
+
         this.accessory.addService(service);
         this.tvService!.addLinkedService(service);
     }
@@ -394,7 +394,7 @@ export class PhilipsTVAccessory {
             [this.api.hap.Characteristic.RemoteKey.PLAY_PAUSE, 'PlayPause'],
             [this.api.hap.Characteristic.RemoteKey.INFORMATION, 'Home'],
         ];
-        const keyMap : Map<CharacteristicValue, string> = new Map();
+        const keyMap: Map<CharacteristicValue, string> = new Map();
 
         for (const key of keyMapArray) {
             keyMap.set(key[0], key[1] as string);
@@ -429,9 +429,9 @@ export class PhilipsTVAccessory {
         if (this.currentApp.component.packageName === 'NA'
             || this.currentApp.component.packageName === 'org.droidtv.zapster'
             || this.currentApp.component.packageName === 'org.droidtv.playtv') {
-            for (const [app_id, app] of Object.entries(this.configuredApps)) {  
-                    
-                if ((app as any).name === this.currentChannel.channel.name){
+            for (const [app_id, app] of Object.entries(this.configuredApps)) {
+
+                if ((app as any).name === this.currentChannel.channel.name) {
                     callback(null, Number(app_id));
                     return;
                 }
@@ -439,8 +439,8 @@ export class PhilipsTVAccessory {
         } else {
             for (const app of (this.apps as any).applications) {
                 if (app.intent.component.packageName === this.currentApp.component.packageName) {
-                    for (const [app_id, configuredApp] of Object.entries(this.configuredApps)) {  
-                        if ((configuredApp as any).name === app.label){
+                    for (const [app_id, configuredApp] of Object.entries(this.configuredApps)) {
+                        if ((configuredApp as any).name === app.label) {
                             callback(null, Number(app_id));
                             return;
                         }
@@ -466,12 +466,12 @@ export class PhilipsTVAccessory {
             }
         } else if (this.configuredApps[Number(value)].type === 'channel') {
             const channel = this.channels.getObjectByName(this.configuredApps[Number(value)].name);
-            const channelRequest = {'channel': channel};
+            const channelRequest = { 'channel': channel };
 
             try {
                 const currentChannel = await this.tv.getCurrentTVChannel();
                 channelRequest['channelList'] = currentChannel.channelList;
-    
+
                 await this.tv.launchTVChannel(channelRequest as any);
             } catch (err) {
                 this.log.debug('Launch TV Channel failed:' + err);
